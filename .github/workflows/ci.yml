@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
         board:
           - uno
           - esp32dev
-          - rpipicow
+          - pico # Changed from rpipicow to pico
 
     steps:
       - uses: actions/checkout@v4
