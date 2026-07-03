@@ -14,7 +14,7 @@ jobs:
         board:
           - uno
           - esp32dev
-          - pico # Changed from rpipicow to pico
+          - pico
 
     steps:
       - uses: actions/checkout@v4
@@ -29,8 +29,16 @@ jobs:
           # Prevent the loop from running if the directory is empty or missing
           shopt -s nullglob  
 
+          # Definir bibliotecas extras se for o Arduino Uno
+          EXTRA_OPTIONS=""
+          if [ "${{ matrix.board }}" = "uno" ]; then
+            EXTRA_OPTIONS="--project-option=lib_deps=feilipu/FreeRTOS"
+          fi
+
           for example in examples/*/; do
             name=$(basename "$example")
-            echo "==> A compilar exemplo: $name"
-            pio ci "$example" --lib="." --board=${{ matrix.board }}
+            echo "==> A compilar exemplo: $name para ${{ matrix.board }}"
+            
+            # Executa o pio ci com as opções extras (se houverem)
+            pio ci "$example" --lib="." --board=${{ matrix.board }} $EXTRA_OPTIONS
           done
