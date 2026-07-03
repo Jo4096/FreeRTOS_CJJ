@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board:
+          - esp32dev
+          - pico
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar PlatformIO
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install platformio
+
+      - name: Compilar exemplos (PlatformIO)
+        run: |
+          # Prevent the loop from running if the directory is empty or missing
+          shopt -s nullglob  
+
+          # Definir bibliotecas extras se for o Arduino Uno
+          EXTRA_OPTIONS=""
+          if [ "${{ matrix.board }}" = "uno" ]; then
+            EXTRA_OPTIONS="--project-option=lib_deps=philliptorrone/Arduino_FreeRTOS_Library"
+          fi
+
+          for example in examples/*/; do
+            name=$(basename "$example")
+            echo "==> A compilar exemplo: $name para ${{ matrix.board }}"
+            
+            # Executa o pio ci com as opções extras (se houverem)
+            pio ci "$example" --lib="." --board=${{ matrix.board }} $EXTRA_OPTIONS
+          done
