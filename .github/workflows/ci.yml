@@ -26,6 +26,9 @@ jobs:
 
       - name: Compilar exemplos (PlatformIO)
         run: |
+          # Prevent the loop from running if the directory is empty or missing
+          shopt -s nullglob  
+
           for example in examples/*/; do
             name=$(basename "$example")
             echo "==> A compilar exemplo: $name"
