@@ -32,7 +32,7 @@ jobs:
           # Definir bibliotecas extras se for o Arduino Uno
           EXTRA_OPTIONS=""
           if [ "${{ matrix.board }}" = "uno" ]; then
-            EXTRA_OPTIONS="--project-option=lib_deps=feilipu/FreeRTOS"
+            EXTRA_OPTIONS="--project-option=lib_deps=philliptorrone/Arduino_FreeRTOS_Library"
           fi
 
           for example in examples/*/; do
