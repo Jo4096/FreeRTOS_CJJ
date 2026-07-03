@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board:
+          - uno
+          - esp32dev
+          - rpipicow
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar PlatformIO
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install platformio
+
+      - name: Compilar exemplos (PlatformIO)
+        run: |
+          for example in examples/*/; do
+            name=$(basename "$example")
+            echo "==> A compilar exemplo: $name"
+            pio ci "$example" --lib="." --board=${{ matrix.board }}
+          done
