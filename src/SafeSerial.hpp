@@ -75,6 +75,9 @@ public:
         return Locked(xMutexHandle, xSerial, default_time);
     }
 
+    void setDefaultTimeout(uint32_t ms) noexcept { default_time = ms; }
+    uint32_t getDefaultTimeout() const noexcept { return default_time; }
+
     template <typename... Args>
     bool printTimeout(uint32_t timeout_ms, Args &&...args)
     {

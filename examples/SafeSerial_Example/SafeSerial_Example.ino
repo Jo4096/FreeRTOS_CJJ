@@ -11,11 +11,35 @@ class TelemetryTask : public ThreadRTOS<Kernel::min_stack_bytes(), 1>
   protected:
     void Run() override
     {
+      int packet_id = 0;
+      float voltage = 3.7f;
+      float current = 0.42f;
+
       for(;;)
       {
-        // Use Case 1: Standard usage using the default 100ms timeout.
-        // This invokes the implicit match wrapper perfectly.
+        packet_id++;
+
+        // Use Case 1: Standard usage using the default timeout.
+        // Unambiguous: print()/println() without timeout always use default_time.
         sSerial.println("[Telemetry Task]: Processing system tasks...");
+
+        // Use Case 2: Locked stream — multiple operations, ONE single lock/unlock.
+        // Ideal for "var = %d, other = %d" without paying for N locks or using printf which creates variables under the hood.
+        if (auto s = sSerial.lockedStream())
+        {
+          s << "[Telemetry Task]: packet=" << packet_id << " voltage=" << voltage << "V current=" << current << "A\n";
+        }
+        else
+        {
+          // Failed to acquire the mutex within the default timeout — ignore this log.
+        }
+
+        // Use Case 3: Locked stream with custom timeout + println() at the end of the block.
+        if (auto s = sSerial.lockedStream(30))
+        {
+          s << "[Telemetry Task]: quick status = OK";
+          s.println(); // extra line without the cost of a new lock
+        }
 
         Kernel::delay(1000);
       }
@@ -28,21 +52,36 @@ class DebugTask : public ThreadRTOS<Kernel::min_stack_bytes(), 1>
     void Run() override
     {
       int loop_count = 0;
-      
+
       for(;;)
       {
         loop_count++;
 
-        // Use Case 2: Explicitly overriding with a custom timeout (e.g., 25 ms).
-        // We cast '25' to (uint32_t) so the compiler bypasses the general fallback 
-        // template and uses the explicit timeout signature.
-        if (sSerial.print((uint32_t)25, "[Debug Task]: Executing heartbeat loop iteration: "))
+        // Use Case 4: Explicit timeout WITHOUT casting
+        // different names eliminate the overload ambiguity that previously existed with print((uint32_t)25, ...).
+        if (sSerial.printTimeout(25, "[Debug Task]: Executing heartbeat loop iteration: "))
         {
-          sSerial.println((uint32_t)25, loop_count);
+          sSerial.printlnTimeout(25, loop_count);
         }
         else
         {
           // Failed to log because the serial mutex couldn't be acquired within 25 ms
+        }
+
+        // Use Case 5: Group heartbeat + counter under the SAME 25ms lock
+        // instead of two separate calls (printTimeout + printlnTimeout above).
+        if (auto s = sSerial.lockedStream(25))
+        {
+          s << "[Debug Task]: heartbeat #" << loop_count << " (grouped, 1 lock)\n";
+        }
+
+        // Use Case 6: From the 10th iteration onwards, we relax the default timeout
+        // of this specific task persistently (affects print()/println()
+        // without explicit timeout from this point forward, across the entire program).
+        if (loop_count == 10)
+        {
+          sSerial.setDefaultTimeout(200);
+          sSerial.println("[Debug Task]: default timeout relaxed to 200ms");
         }
 
         Kernel::delay(500);
@@ -57,6 +96,10 @@ void setup()
 {
   Serial.begin(115200);
   while(!Serial){ delay(1); }
+
+  sSerial.println("[Setup]: current default timeout = ");
+  // getDefaultTimeout() useful for configuration logging/diagnostics.
+  sSerial.println(sSerial.getDefaultTimeout());
 
   telemetry();
   debug_log();
