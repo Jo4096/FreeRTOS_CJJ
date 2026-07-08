@@ -14,6 +14,46 @@ private:
     uint32_t default_time;
 
 public:
+    class Locked
+    {
+    private:
+        UniqueLock lock;
+        Stream &xSerial;
+
+    public:
+        Locked(SemaphoreHandle_t &mtx, Stream &s, uint32_t timeout_ms) : lock(mtx, timeout_ms), xSerial(s) {}
+
+        Locked(const Locked &) = delete;
+        Locked &operator=(const Locked &) = delete;
+
+        explicit operator bool() const noexcept { return lock.owns_lock(); }
+        bool owns_lock() const noexcept { return lock.owns_lock(); }
+
+        template <typename T>
+        Locked &operator<<(T &&v)
+        {
+            if (lock.owns_lock())
+                xSerial.print(custom_std::forward<T>(v));
+            return *this;
+        }
+
+        template <typename... Args>
+        Locked &println(Args &&...args)
+        {
+            if (lock.owns_lock())
+                xSerial.println(custom_std::forward<Args>(args)...);
+            return *this;
+        }
+
+        template <typename... Args>
+        Locked &print(Args &&...args)
+        {
+            if (lock.owns_lock())
+                xSerial.print(custom_std::forward<Args>(args)...);
+            return *this;
+        }
+    };
+
     SafeSerial() = delete;
     SafeSerial(const SafeSerial &) = delete;
     SafeSerial &operator=(const SafeSerial &) = delete;
@@ -25,11 +65,18 @@ public:
         xMutexHandle = xSemaphoreCreateMutexStatic(&xMutexBuffer);
     }
 
-    // Nota: Removido o xSerial.begin() porque nem toda classe herdada de 'Stream' possui .begin() com a mesma assinatura.
-    // É melhor chamar Serial.begin() direto no setup().
+    Locked lockedStream(uint32_t timeout_ms)
+    {
+        return Locked(xMutexHandle, xSerial, timeout_ms);
+    }
+
+    Locked lockedStream()
+    {
+        return Locked(xMutexHandle, xSerial, default_time);
+    }
 
     template <typename... Args>
-    bool print(uint32_t timeout_ms, Args &&...args)
+    bool printTimeout(uint32_t timeout_ms, Args &&...args)
     {
         if (xMutexHandle == nullptr)
             return false;
@@ -37,7 +84,6 @@ public:
         UniqueLock lock(xMutexHandle, timeout_ms);
         if (lock.owns_lock())
         {
-            // custom_std::forward vai resolver o problema do AVR
             xSerial.print(custom_std::forward<Args>(args)...);
             return true;
         }
@@ -45,7 +91,7 @@ public:
     }
 
     template <typename... Args>
-    bool println(uint32_t timeout_ms, Args &&...args)
+    bool printlnTimeout(uint32_t timeout_ms, Args &&...args)
     {
         if (xMutexHandle == nullptr)
             return false;
@@ -62,13 +108,13 @@ public:
     template <typename... Args>
     bool print(Args &&...args)
     {
-        return print(default_time, custom_std::forward<Args>(args)...);
+        return printTimeout(default_time, custom_std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     bool println(Args &&...args)
     {
-        return println(default_time, custom_std::forward<Args>(args)...);
+        return printlnTimeout(default_time, custom_std::forward<Args>(args)...);
     }
 };
 
