@@ -16,7 +16,7 @@ class IThread
 public:
     virtual ~IThread() = default;
 
-    [[nodiscard]] virtual void operator()(const char *name = "Task") = 0;
+    virtual void operator()(const char *name = "Task") = 0;
     [[nodiscard]] virtual bool IsRunning() const = 0;
     [[nodiscard]] virtual TaskHandle_t Handle() const = 0;
     [[nodiscard]] virtual size_t stack_high_water_mark() const = 0;
