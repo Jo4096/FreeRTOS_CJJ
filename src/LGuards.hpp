@@ -27,7 +27,7 @@ public:
 
     LockGuard(Mutex &mutex, uint32_t ms_timeout = 0xFFFFFFFF);
 
-    bool owns_lock() const noexcept;
+    [[nodiscard]] bool owns_lock() const noexcept;
 
     ~LockGuard();
 };
@@ -51,11 +51,11 @@ public:
 
     UniqueLock(Mutex &mutex, defer_lock_t dl) noexcept;
 
-    bool lock(uint32_t ms_timeout = 0xFFFFFFFF);
+    [[nodiscard]] bool lock(uint32_t ms_timeout = 0xFFFFFFFF);
 
     void unlock();
 
-    bool owns_lock() const noexcept;
+    [[nodiscard]] bool owns_lock() const noexcept;
 
     ~UniqueLock();
 };
@@ -74,7 +74,7 @@ public:
     RecursiveLockGuard(SemaphoreHandle_t &mutex, uint32_t ms_timeout = 0xFFFFFFFF);
 
     RecursiveLockGuard(RecursiveMutex &mutex, uint32_t ms_timeout = 0xFFFFFFFF);
-    bool owns_lock() const noexcept;
+    [[nodiscard]] bool owns_lock() const noexcept;
 
     ~RecursiveLockGuard();
 };
@@ -98,11 +98,11 @@ public:
 
     RecursiveUniqueLock(RecursiveMutex &mutex, defer_lock_t dl) noexcept;
 
-    bool lock(uint32_t ms_timeout = 0xFFFFFFFF);
+    [[nodiscard]] bool lock(uint32_t ms_timeout = 0xFFFFFFFF);
 
     void unlock();
 
-    bool owns_lock() const noexcept;
+    [[nodiscard]] bool owns_lock() const noexcept;
 
     ~RecursiveUniqueLock();
 };

@@ -4,7 +4,6 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/semphr.h", <semphr.h>, <semphr.h>)
 
-
 #if defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
 #define xSemaphoreCreateMutexStatic(pxMutexBuffer) \
     xSemaphoreCreateMutex()
@@ -29,7 +28,7 @@ public:
 
     ~Mutex();
 
-    SemaphoreHandle_t &get_handle() noexcept;
+    [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
 };
 
 class RecursiveMutex
@@ -48,7 +47,7 @@ public:
 
     ~RecursiveMutex();
 
-    SemaphoreHandle_t &get_handle() noexcept;
+    [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
 };
 
 #endif

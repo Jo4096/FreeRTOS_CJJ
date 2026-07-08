@@ -27,15 +27,15 @@ public:
 
     void begin(int master_address);
 
-    bool write_register(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, size_t len, uint32_t timeout_ms);
+    [[nodiscard]] bool write_register(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, size_t len, uint32_t timeout_ms);
 
-    bool write_register(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, size_t len);
+    [[nodiscard]] bool write_register(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, size_t len);
 
-    bool read_register(uint8_t dev_addr, uint8_t reg_addr, uint8_t *output_buffer, uint8_t quantity, uint32_t timeout_ms);
+    [[nodiscard]] bool read_register(uint8_t dev_addr, uint8_t reg_addr, uint8_t *output_buffer, uint8_t quantity, uint32_t timeout_ms);
 
-    bool read_register(uint8_t dev_addr, uint8_t reg_addr, uint8_t *output_buffer, uint8_t quantity);
+    [[nodiscard]] bool read_register(uint8_t dev_addr, uint8_t reg_addr, uint8_t *output_buffer, uint8_t quantity);
 
-    SemaphoreHandle_t &get_mutex() noexcept;
+    [[nodiscard]] SemaphoreHandle_t &get_mutex() noexcept;
 };
 
 #endif

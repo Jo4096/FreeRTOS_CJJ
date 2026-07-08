@@ -25,15 +25,15 @@ public:
 
     void begin();
 
-    bool transfer(uint8_t cs_pin, const uint8_t *tx_buffer, uint8_t *rx_buffer, size_t len, uint32_t timeout_ms);
+    [[nodiscard]] bool transfer(uint8_t cs_pin, const uint8_t *tx_buffer, uint8_t *rx_buffer, size_t len, uint32_t timeout_ms);
 
-    bool transfer(uint8_t cs_pin, const uint8_t *tx_buffer, uint8_t *rx_buffer, size_t len);
+    [[nodiscard]] bool transfer(uint8_t cs_pin, const uint8_t *tx_buffer, uint8_t *rx_buffer, size_t len);
 
-    uint8_t transfer_byte(uint8_t cs_pin, uint8_t data, uint32_t timeout_ms);
+    [[nodiscard]] uint8_t transfer_byte(uint8_t cs_pin, uint8_t data, uint32_t timeout_ms);
 
-    uint8_t transfer_byte(uint8_t cs_pin, uint8_t data);
+    [[nodiscard]] uint8_t transfer_byte(uint8_t cs_pin, uint8_t data);
 
-    SemaphoreHandle_t &get_mutex() noexcept;
+    [[nodiscard]] SemaphoreHandle_t &get_mutex() noexcept;
 };
 
 #endif

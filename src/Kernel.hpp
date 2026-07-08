@@ -4,7 +4,6 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/task.h", <task.h>, <task.h>)
 
-
 namespace Kernel
 {
     enum class SchedulerState
@@ -14,9 +13,9 @@ namespace Kernel
         Suspended
     };
 
-    SchedulerState scheduler_state();
+    [[nodiscard]] SchedulerState scheduler_state();
 
-    bool is_running();
+    [[nodiscard]] bool is_running();
 
     void start();
 
@@ -24,23 +23,23 @@ namespace Kernel
 
     void delay_until(TickType_t &lastTime, uint32_t ms);
 
-    uint32_t uptime_ms();
+    [[nodiscard]] uint32_t uptime_ms();
 
-    uint32_t uptime_ms_from_isr();
+    [[nodiscard]] uint32_t uptime_ms_from_isr();
 
     void yield();
 
-    size_t free_heap();
+    [[nodiscard]] size_t free_heap();
 
     void suspend_scheduler();
 
-    bool resume_scheduler();
+    [[nodiscard]] bool resume_scheduler();
 
     void enter_critical();
 
     void exit_critical();
 
-    UBaseType_t enter_critical_from_isr();
+    [[nodiscard]] UBaseType_t enter_critical_from_isr();
 
     void exit_critical_from_isr(UBaseType_t saved_status);
 

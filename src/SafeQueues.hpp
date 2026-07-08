@@ -4,13 +4,10 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/queue.h", <queue.h>, <queue.h>)
 
-
 #if defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
 #define xQueueCreateStatic(uxQueueLength, uxItemSize, pucQueueStorageBuffer, pxQueueBuffer) \
     xQueueCreate((uxQueueLength), (uxItemSize))
 #endif
-
-
 
 template <typename T, UBaseType_t QueueLength>
 class SafeQueue
@@ -33,7 +30,7 @@ public:
 
     ~SafeQueue() = default;
 
-    bool send(const T &item, uint32_t ms_timeout = 0xFFFFFFFF)
+    [[nodiscard]] bool send(const T &item, uint32_t ms_timeout = 0xFFFFFFFF)
     {
         if (xQueue == nullptr)
             return false;
@@ -41,7 +38,7 @@ public:
         return xQueueSend(xQueue, &item, ticks) == pdPASS;
     }
 
-    bool receive(T &item, uint32_t ms_timeout = 0xFFFFFFFF)
+    [[nodiscard]] bool receive(T &item, uint32_t ms_timeout = 0xFFFFFFFF)
     {
         if (xQueue == nullptr)
             return false;
@@ -49,7 +46,7 @@ public:
         return xQueueReceive(xQueue, &item, ticks) == pdPASS;
     }
 
-    bool send_from_isr(const T &item, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] bool send_from_isr(const T &item, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xQueue == nullptr)
             return false;
@@ -67,7 +64,7 @@ public:
         return success;
     }
 
-    bool receive_from_isr(T &item, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] bool receive_from_isr(T &item, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xQueue == nullptr)
             return false;
@@ -85,8 +82,8 @@ public:
         return success;
     }
 
-    UBaseType_t messages_waiting() const noexcept { return uxQueueMessagesWaiting(xQueue); }
-    UBaseType_t spaces_available() const noexcept { return uxQueueSpacesAvailable(xQueue); }
+    [[nodiscard]] UBaseType_t messages_waiting() const noexcept { return uxQueueMessagesWaiting(xQueue); }
+    [[nodiscard]] UBaseType_t spaces_available() const noexcept { return uxQueueSpacesAvailable(xQueue); }
     void reset() { xQueueReset(xQueue); }
 };
 

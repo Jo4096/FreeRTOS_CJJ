@@ -8,11 +8,11 @@
 class TaskNotification
 {
 public:
-    static bool notify(const IThread &target_thread);
+    [[nodiscard]] static bool notify(const IThread &target_thread);
 
-    static bool notify_from_isr(const IThread &target_thread, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+    [[nodiscard]] static bool notify_from_isr(const IThread &target_thread, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 
-    static uint32_t wait(bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] static uint32_t wait(bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
 };
 
 #endif

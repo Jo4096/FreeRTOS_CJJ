@@ -26,8 +26,8 @@ public:
         Locked(const Locked &) = delete;
         Locked &operator=(const Locked &) = delete;
 
-        explicit operator bool() const noexcept { return lock.owns_lock(); }
-        bool owns_lock() const noexcept { return lock.owns_lock(); }
+        [[nodiscard]] explicit operator bool() const noexcept { return lock.owns_lock(); }
+        [[nodiscard]] bool owns_lock() const noexcept { return lock.owns_lock(); }
 
         template <typename T>
         Locked &operator<<(T &&v)
@@ -76,10 +76,10 @@ public:
     }
 
     void setDefaultTimeout(uint32_t ms) noexcept { default_time = ms; }
-    uint32_t getDefaultTimeout() const noexcept { return default_time; }
+    [[nodiscard]] uint32_t getDefaultTimeout() const noexcept { return default_time; }
 
     template <typename... Args>
-    bool printTimeout(uint32_t timeout_ms, Args &&...args)
+    [[nodiscard]] bool printTimeout(uint32_t timeout_ms, Args &&...args)
     {
         if (xMutexHandle == nullptr)
             return false;
@@ -94,7 +94,7 @@ public:
     }
 
     template <typename... Args>
-    bool printlnTimeout(uint32_t timeout_ms, Args &&...args)
+    [[nodiscard]] bool printlnTimeout(uint32_t timeout_ms, Args &&...args)
     {
         if (xMutexHandle == nullptr)
             return false;
@@ -109,13 +109,13 @@ public:
     }
 
     template <typename... Args>
-    bool print(Args &&...args)
+    [[nodiscard]] bool print(Args &&...args)
     {
         return printTimeout(default_time, custom_std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    bool println(Args &&...args)
+    [[nodiscard]] bool println(Args &&...args)
     {
         return printlnTimeout(default_time, custom_std::forward<Args>(args)...);
     }

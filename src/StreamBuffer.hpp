@@ -4,7 +4,6 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/stream_buffer.h", <stream_buffer.h>, <stream_buffer.h>)
 
-
 #if defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
 #ifdef xStreamBufferCreate
 #ifndef xStreamBufferCreateStatic
@@ -17,7 +16,6 @@
 #endif
 #endif
 #endif
-
 
 template <size_t BufferSize, size_t TriggerLevel = 1>
 class StreamBuffer
@@ -51,7 +49,7 @@ public:
         }
     }
 
-    size_t send(const void *data, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] size_t send(const void *data, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         if (xHandle == nullptr || data == nullptr || len == 0)
             return 0;
@@ -59,7 +57,7 @@ public:
         return xStreamBufferSend(xHandle, data, len, ticks);
     }
 
-    size_t send_from_isr(const void *data, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] size_t send_from_isr(const void *data, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xHandle == nullptr || data == nullptr || len == 0)
             return 0;
@@ -76,7 +74,7 @@ public:
         return sent;
     }
 
-    size_t receive(void *buffer, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] size_t receive(void *buffer, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         if (xHandle == nullptr || buffer == nullptr || len == 0)
             return 0;
@@ -84,7 +82,7 @@ public:
         return xStreamBufferReceive(xHandle, buffer, len, ticks);
     }
 
-    size_t receive_from_isr(void *buffer, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] size_t receive_from_isr(void *buffer, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xHandle == nullptr || buffer == nullptr || len == 0)
             return 0;
@@ -101,14 +99,14 @@ public:
         return recvd;
     }
 
-    size_t bytes_available() const { return xStreamBufferBytesAvailable(xHandle); }
-    size_t spaces_available() const { return xStreamBufferSpacesAvailable(xHandle); }
-    bool is_empty() const { return xStreamBufferIsEmpty(xHandle) == pdTRUE; }
-    bool is_full() const { return xStreamBufferIsFull(xHandle) == pdTRUE; }
+    [[nodiscard]] size_t bytes_available() const { return xStreamBufferBytesAvailable(xHandle); }
+    [[nodiscard]] size_t spaces_available() const { return xStreamBufferSpacesAvailable(xHandle); }
+    [[nodiscard]] bool is_empty() const { return xStreamBufferIsEmpty(xHandle) == pdTRUE; }
+    [[nodiscard]] bool is_full() const { return xStreamBufferIsFull(xHandle) == pdTRUE; }
 
     bool reset() { return xStreamBufferReset(xHandle) == pdPASS; }
 
-    StreamBufferHandle_t get_handle() const noexcept { return xHandle; }
+    [[nodiscard]] StreamBufferHandle_t get_handle() const noexcept { return xHandle; }
 };
 
 template <size_t BufferSize>
@@ -141,7 +139,7 @@ public:
         }
     }
 
-    size_t send(const void *data, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] size_t send(const void *data, size_t len, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         if (xHandle == nullptr || data == nullptr || len == 0)
             return 0;
@@ -150,12 +148,12 @@ public:
     }
 
     template <typename T>
-    size_t send_value(const T &value, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] size_t send_value(const T &value, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         return send(&value, sizeof(T), timeout_ms);
     }
 
-    size_t send_from_isr(const void *data, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] size_t send_from_isr(const void *data, size_t len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xHandle == nullptr || data == nullptr || len == 0)
             return 0;
@@ -172,7 +170,7 @@ public:
         return sent;
     }
 
-    size_t receive(void *buffer, size_t max_len, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] size_t receive(void *buffer, size_t max_len, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         if (xHandle == nullptr || buffer == nullptr || max_len == 0)
             return 0;
@@ -181,12 +179,12 @@ public:
     }
 
     template <typename T>
-    bool receive_value(T &value, uint32_t timeout_ms = 0xFFFFFFFF)
+    [[nodiscard]] bool receive_value(T &value, uint32_t timeout_ms = 0xFFFFFFFF)
     {
         return receive(&value, sizeof(T), timeout_ms) == sizeof(T);
     }
 
-    size_t receive_from_isr(void *buffer, size_t max_len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
+    [[nodiscard]] size_t receive_from_isr(void *buffer, size_t max_len, BaseType_t *pxHigherPriorityTaskWoken = nullptr)
     {
         if (xHandle == nullptr || buffer == nullptr || max_len == 0)
             return 0;
@@ -203,13 +201,13 @@ public:
         return recvd;
     }
 
-    size_t spaces_available() const { return xMessageBufferSpacesAvailable(xHandle); }
-    bool is_empty() const { return xMessageBufferIsEmpty(xHandle) == pdTRUE; }
-    bool is_full() const { return xMessageBufferIsFull(xHandle) == pdTRUE; }
+    [[nodiscard]] size_t spaces_available() const { return xMessageBufferSpacesAvailable(xHandle); }
+    [[nodiscard]] bool is_empty() const { return xMessageBufferIsEmpty(xHandle) == pdTRUE; }
+    [[nodiscard]] bool is_full() const { return xMessageBufferIsFull(xHandle) == pdTRUE; }
 
     bool reset() { return xMessageBufferReset(xHandle) == pdPASS; }
 
-    MessageBufferHandle_t get_handle() const noexcept { return xHandle; }
+    [[nodiscard]] MessageBufferHandle_t get_handle() const noexcept { return xHandle; }
 };
 
 #endif

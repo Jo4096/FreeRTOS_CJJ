@@ -5,10 +5,10 @@
 #include RTOS_INC("freertos/task.h", <task.h>, <task.h>)
 
 #if defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
-    #define THREADS_NO_STATIC_ALLOC 1
-    #warning "Notice: On Arduino UNO, tasks are DYNAMICALLY allocated (xTaskCreate) due to memory architecture constraints, unlike ESP32 or Raspberry Pi which use STATIC allocation."
+#define THREADS_NO_STATIC_ALLOC 1
+#warning "Notice: On Arduino UNO, tasks are DYNAMICALLY allocated (xTaskCreate) due to memory architecture constraints, unlike ESP32 or Raspberry Pi which use STATIC allocation."
 #else
-    #define THREADS_NO_STATIC_ALLOC 0
+#define THREADS_NO_STATIC_ALLOC 0
 #endif
 
 class IThread
@@ -16,10 +16,10 @@ class IThread
 public:
     virtual ~IThread() = default;
 
-    virtual void operator()(const char *name = "Task") = 0;
-    virtual bool IsRunning() const = 0;
-    virtual TaskHandle_t Handle() const = 0;
-    virtual size_t stack_high_water_mark() const = 0;
+    [[nodiscard]] virtual void operator()(const char *name = "Task") = 0;
+    [[nodiscard]] virtual bool IsRunning() const = 0;
+    [[nodiscard]] virtual TaskHandle_t Handle() const = 0;
+    [[nodiscard]] virtual size_t stack_high_water_mark() const = 0;
 
     IThread() = default;
     IThread(const IThread &) = delete;
@@ -62,7 +62,6 @@ protected:
     virtual void Run() = 0;
 
 public:
-
     virtual ~ThreadABS()
     {
         if (xHandle != nullptr)

@@ -4,7 +4,6 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/semphr.h", <semphr.h>, <semphr.h>)
 
-
 #if defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
 #define xSemaphoreCreateBinaryStatic(pxSemaphoreBuffer) \
     xSemaphoreCreateBinary()
@@ -25,11 +24,11 @@ public:
 
     ~BinarySemaphore();
 
-    bool take(uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
 
-    bool give();
+    [[nodiscard]] bool give();
 
-    bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+    [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 };
 
 class CountingSemaphore
@@ -46,13 +45,13 @@ public:
 
     ~CountingSemaphore();
 
-    bool take(uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
 
-    bool give();
+    [[nodiscard]] bool give();
 
-    bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+    [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 
-    UBaseType_t get_count() const noexcept;
+    [[nodiscard]] UBaseType_t get_count() const noexcept;
 };
 
 #endif
