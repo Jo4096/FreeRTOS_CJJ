@@ -97,7 +97,7 @@ RecursiveLockGuard::~RecursiveLockGuard()
 
 RecursiveUniqueLock::RecursiveUniqueLock(SemaphoreHandle_t &mutex, uint32_t ms_timeout) : mutex(mutex)
 {
-    lock(ms_timeout);
+    (void)lock(ms_timeout);
 }
 
 RecursiveUniqueLock::RecursiveUniqueLock(RecursiveMutex &mutex, uint32_t ms_timeout) : RecursiveUniqueLock(mutex.get_handle(), ms_timeout) {}
