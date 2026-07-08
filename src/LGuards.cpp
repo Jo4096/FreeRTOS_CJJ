@@ -31,7 +31,7 @@ LockGuard::~LockGuard()
 
 UniqueLock::UniqueLock(SemaphoreHandle_t &mutex, uint32_t ms_timeout) : mutex(mutex)
 {
-    lock(ms_timeout);
+    (void)lock(ms_timeout);
 }
 
 UniqueLock::UniqueLock(Mutex &mutex, uint32_t ms_timeout) : UniqueLock(mutex.get_handle(), ms_timeout) {}
