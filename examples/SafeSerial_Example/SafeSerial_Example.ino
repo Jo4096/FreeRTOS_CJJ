@@ -21,13 +21,31 @@ class TelemetryTask : public ThreadRTOS<Kernel::min_stack_bytes(), 1>
 
         // Use Case 1: Standard usage using the default timeout.
         // Unambiguous: print()/println() without timeout always use default_time.
-        sSerial.println("[Telemetry Task]: Processing system tasks...");
+        // print()/println() are marked as [[nodiscard]] meaning that they return a value that can't be ignored
+        // that value is a bool that when false it means that the printing failed (sSerial couldn't hold the mutex in time)
+        // to suppress that compiler warning we can simply add a (void) before calling the function
+        (void)sSerial.println("[Telemetry Task]: Processing system tasks...");
 
         // Use Case 2: Locked stream — multiple operations, ONE single lock/unlock.
-        // Ideal for "var = %d, other = %d" without paying for N locks or using printf which creates variables under the hood.
+        // Ideal for sequential printing without paying for N locks or using printf.
+        //
+        // NOTE: Evaluating lockedStream() inside the 'if' condition safely checks if the 
+        // lock was acquired. Inside the block, you can freely call s.print()/println()/<< 
+        // without worrying about individual [[nodiscard]] return warnings.
         if (auto s = sSerial.lockedStream())
         {
           s << "[Telemetry Task]: packet=" << packet_id << " voltage=" << voltage << "V current=" << current << "A\n";
+          
+          //or if you don't like the << operator
+          /*
+            s.print("[Telemetry Task]: packet=");
+            s.print(packet_id);
+            s.print(" voltage=");
+            s.print(voltage);
+            s.print("V current=");
+            s.print(current);
+            s.println("A");
+          */
         }
         else
         {
@@ -61,7 +79,7 @@ class DebugTask : public ThreadRTOS<Kernel::min_stack_bytes(), 1>
         // different names eliminate the overload ambiguity that previously existed with print((uint32_t)25, ...).
         if (sSerial.printTimeout(25, "[Debug Task]: Executing heartbeat loop iteration: "))
         {
-          sSerial.printlnTimeout(25, loop_count);
+          (void)sSerial.printlnTimeout(25, loop_count);
         }
         else
         {
@@ -81,7 +99,7 @@ class DebugTask : public ThreadRTOS<Kernel::min_stack_bytes(), 1>
         if (loop_count == 10)
         {
           sSerial.setDefaultTimeout(200);
-          sSerial.println("[Debug Task]: default timeout relaxed to 200ms");
+          (void)sSerial.println("[Debug Task]: default timeout relaxed to 200ms");
         }
 
         Kernel::delay(500);
@@ -97,9 +115,9 @@ void setup()
   Serial.begin(115200);
   while(!Serial){ delay(1); }
 
-  sSerial.println("[Setup]: current default timeout = ");
+  (void)sSerial.println("[Setup]: current default timeout = ");
   // getDefaultTimeout() useful for configuration logging/diagnostics.
-  sSerial.println(sSerial.getDefaultTimeout());
+  (void)sSerial.println(sSerial.getDefaultTimeout());
 
   telemetry();
   debug_log();
