@@ -16,7 +16,7 @@ class IThread
 public:
     virtual ~IThread() = default;
 
-    virtual void operator()(const char *name = "Task") = 0;
+    virtual void operator()(const char *name = "Task", CoreAffinity affinity = CORE_ANY) = 0;
     [[nodiscard]] virtual bool IsRunning() const = 0;
     [[nodiscard]] virtual TaskHandle_t Handle() const = 0;
     [[nodiscard]] virtual size_t stack_high_water_mark() const = 0;
@@ -71,16 +71,39 @@ public:
         }
     }
 
-    void operator()(const char *name = "Task") override
+    void operator()(const char *name = "Task", CoreAffinity affinity = CORE_ANY) override
     {
-        if (xHandle == nullptr)
-        {
+        if (xHandle != nullptr)
+            return;
+
+#if defined(ESP32)
 #if THREADS_NO_STATIC_ALLOC
-            xTaskCreate(TaskHook, name, StackDepth, this, Priority, &xHandle);
+        xTaskCreatePinnedToCore(TaskHook, name, StackDepth, this, Priority, &xHandle, affinity);
 #else
-            xHandle = xTaskCreateStatic(TaskHook, name, StackDepth, this, Priority, xStack, &xTaskBuffer);
+        xHandle = xTaskCreateStaticPinnedToCore(TaskHook, name, StackDepth, this, Priority, xStack, &xTaskBuffer, affinity);
 #endif
+
+#else
+#if THREADS_NO_STATIC_ALLOC
+        xTaskCreate(TaskHook, name, StackDepth, this, Priority, &xHandle);
+#else
+        xHandle = xTaskCreateStatic(TaskHook, name, StackDepth, this, Priority, xStack, &xTaskBuffer);
+#endif
+
+#if defined(ARDUINO_ARCH_RP2040) || defined(TARGET_RP2040)
+        if (xHandle != nullptr)
+        {
+            UBaseType_t mask = (affinity == CORE_ANY)
+                                   ? ((1u << configNUMBER_OF_CORES) - 1u) // all cores
+                                   : affinity;
+            vTaskCoreAffinitySet(xHandle, mask);
         }
+#endif
+#elif defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
+        static_assert(THREADS_NO_STATIC_ALLOC == 1, "Error: AVR build expected without static allocation support.");
+        (void)affinity;
+#endif
+#endif
     }
 
     TaskHandle_t Handle() const noexcept override { return xHandle; }
