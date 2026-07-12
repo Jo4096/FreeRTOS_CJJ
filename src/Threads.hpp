@@ -83,7 +83,16 @@ public:
         xHandle = xTaskCreateStaticPinnedToCore(TaskHook, name, StackDepth, this, Priority, xStack, &xTaskBuffer, affinity);
 #endif
 
+#elif defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
+        static_assert(THREADS_NO_STATIC_ALLOC == 1, "Error: AVR build expected without static allocation support.");
+        (void)affinity;
+#if THREADS_NO_STATIC_ALLOC
+        xTaskCreate(TaskHook, name, StackDepth, this, Priority, &xHandle);
 #else
+        xHandle = xTaskCreateStatic(TaskHook, name, StackDepth, this, Priority, xStack, &xTaskBuffer);
+#endif
+
+#else // Standard or RP2040 FreeRTOS targets
 #if THREADS_NO_STATIC_ALLOC
         xTaskCreate(TaskHook, name, StackDepth, this, Priority, &xHandle);
 #else
@@ -98,10 +107,6 @@ public:
                                    : affinity;
             vTaskCoreAffinitySet(xHandle, mask);
         }
-#endif
-#elif defined(__AVR_ATmega328P__) || defined(ARDUINO_AVR_UNO)
-        static_assert(THREADS_NO_STATIC_ALLOC == 1, "Error: AVR build expected without static allocation support.");
-        (void)affinity;
 #endif
 #endif
     }
