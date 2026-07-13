@@ -1,6 +1,6 @@
 #define FREERTOS_CJJ_USE_THREADS
 #include <FreeRTOS_CJJ.h>
-#include "SafeRingBuffer.hpp"
+#include <SafeRingBuffer.hpp>
 #include <SafeSerial.hpp>
 
 // For more info on SafeSerial check the SafeSerial_Example
