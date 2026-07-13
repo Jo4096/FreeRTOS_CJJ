@@ -37,7 +37,7 @@ protected:
 };
 
 // --- Printer: every 1s, dumps the whole buffer using for_each (enumerate-style) ---
-class HistoryPrinter : public ThreadArduino<Kernel::min_stack_bytes(), 1>
+class HistoryPrinter : public ThreadArduino<4096, 1>
 {
 protected:
   void loop() override
@@ -68,7 +68,7 @@ protected:
 };
 
 // --- SerialConsumer: type "pop" in the Serial Monitor to consume the most recent reading ---
-class SerialConsumer : public ThreadArduino<Kernel::min_stack_bytes(), 1>
+class SerialConsumer : public ThreadArduino<4096, 1>
 {
 protected:
   void loop() override
