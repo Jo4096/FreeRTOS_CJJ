@@ -1,45 +1,47 @@
 #include "Mutex.hpp"
-
-//===========================
-//          MUTEX
-//===========================
-
-Mutex::Mutex()
+namespace fcjj
 {
-    xMutexHandle = xSemaphoreCreateMutexStatic(&xMutexBuffer);
-}
+    //===========================
+    //          MUTEX
+    //===========================
 
-Mutex::~Mutex()
-{
-    if (xMutexHandle != nullptr)
+    Mutex::Mutex()
     {
-        vSemaphoreDelete(xMutexHandle);
+        xMutexHandle = xSemaphoreCreateMutexStatic(&xMutexBuffer);
     }
-}
 
-SemaphoreHandle_t &Mutex::get_handle() noexcept
-{
-    return xMutexHandle;
-}
-
-//===========================
-//      RECURSIVEMUTEX
-//===========================
-
-RecursiveMutex::RecursiveMutex()
-{
-    xMutexHandle = xSemaphoreCreateRecursiveMutexStatic(&xMutexBuffer);
-}
-
-RecursiveMutex::~RecursiveMutex()
-{
-    if (xMutexHandle != nullptr)
+    Mutex::~Mutex()
     {
-        vSemaphoreDelete(xMutexHandle);
+        if (xMutexHandle != nullptr)
+        {
+            vSemaphoreDelete(xMutexHandle);
+        }
     }
-}
 
-SemaphoreHandle_t &RecursiveMutex::get_handle() noexcept
-{
-    return xMutexHandle;
+    SemaphoreHandle_t &Mutex::get_handle() noexcept
+    {
+        return xMutexHandle;
+    }
+
+    //===========================
+    //      RECURSIVEMUTEX
+    //===========================
+
+    RecursiveMutex::RecursiveMutex()
+    {
+        xMutexHandle = xSemaphoreCreateRecursiveMutexStatic(&xMutexBuffer);
+    }
+
+    RecursiveMutex::~RecursiveMutex()
+    {
+        if (xMutexHandle != nullptr)
+        {
+            vSemaphoreDelete(xMutexHandle);
+        }
+    }
+
+    SemaphoreHandle_t &RecursiveMutex::get_handle() noexcept
+    {
+        return xMutexHandle;
+    }
 }

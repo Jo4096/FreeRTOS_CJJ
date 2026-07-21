@@ -3,6 +3,8 @@
 #include <LGuards.hpp>
 #include <ThreadRTOS.hpp>
 
+using namespace fcjj;
+
 struct DataStruct
 {
   uint8_t id = 0;

@@ -11,47 +11,49 @@
     xSemaphoreCreateCounting((uxMaxCount), (uxInitialCount))
 #endif
 
-class BinarySemaphore
+namespace fcjj
 {
-private:
-    SemaphoreHandle_t _xSemaphoreHandle = nullptr;
-    StaticSemaphore_t _xSemaphoreBuffer;
+    class BinarySemaphore
+    {
+    private:
+        SemaphoreHandle_t _xSemaphoreHandle = nullptr;
+        StaticSemaphore_t _xSemaphoreBuffer;
 
-public:
-    BinarySemaphore();
-    BinarySemaphore(const BinarySemaphore &) = delete;
-    BinarySemaphore &operator=(const BinarySemaphore &) = delete;
+    public:
+        BinarySemaphore();
+        BinarySemaphore(const BinarySemaphore &) = delete;
+        BinarySemaphore &operator=(const BinarySemaphore &) = delete;
 
-    ~BinarySemaphore();
+        ~BinarySemaphore();
 
-    [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
+        [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
 
-    [[nodiscard]] bool give();
+        [[nodiscard]] bool give();
 
-    [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
-};
+        [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+    };
 
-class CountingSemaphore
-{
-private:
-    SemaphoreHandle_t _xSemaphoreHandle = nullptr;
-    StaticSemaphore_t _xSemaphoreBuffer;
+    class CountingSemaphore
+    {
+    private:
+        SemaphoreHandle_t _xSemaphoreHandle = nullptr;
+        StaticSemaphore_t _xSemaphoreBuffer;
 
-public:
-    CountingSemaphore() = delete;
-    CountingSemaphore(const CountingSemaphore &) = delete;
-    CountingSemaphore &operator=(const CountingSemaphore &) = delete;
-    CountingSemaphore(UBaseType_t max_count, UBaseType_t initial_count);
+    public:
+        CountingSemaphore() = delete;
+        CountingSemaphore(const CountingSemaphore &) = delete;
+        CountingSemaphore &operator=(const CountingSemaphore &) = delete;
+        CountingSemaphore(UBaseType_t max_count, UBaseType_t initial_count);
 
-    ~CountingSemaphore();
+        ~CountingSemaphore();
 
-    [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
+        [[nodiscard]] bool take(uint32_t timeout_ms = 0xFFFFFFFF);
 
-    [[nodiscard]] bool give();
+        [[nodiscard]] bool give();
 
-    [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+        [[nodiscard]] bool give_from_isr(BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 
-    [[nodiscard]] UBaseType_t get_count() const noexcept;
-};
-
+        [[nodiscard]] UBaseType_t get_count() const noexcept;
+    };
+}
 #endif

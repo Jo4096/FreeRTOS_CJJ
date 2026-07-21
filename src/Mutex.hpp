@@ -12,42 +12,45 @@
     xSemaphoreCreateRecursiveMutex()
 #endif
 
-class Mutex
+namespace fcjj
 {
-private:
-    SemaphoreHandle_t xMutexHandle = nullptr;
-    StaticSemaphore_t xMutexBuffer;
+    class Mutex
+    {
+    private:
+        SemaphoreHandle_t xMutexHandle = nullptr;
+        StaticSemaphore_t xMutexBuffer;
 
-public:
-    Mutex();
+    public:
+        Mutex();
 
-    Mutex(const Mutex &) = delete;
-    Mutex &operator=(const Mutex &) = delete;
-    Mutex(Mutex &&) = delete;
-    Mutex &operator=(Mutex &&) = delete;
+        Mutex(const Mutex &) = delete;
+        Mutex &operator=(const Mutex &) = delete;
+        Mutex(Mutex &&) = delete;
+        Mutex &operator=(Mutex &&) = delete;
 
-    ~Mutex();
+        ~Mutex();
 
-    [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
-};
+        [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
+    };
 
-class RecursiveMutex
-{
-private:
-    SemaphoreHandle_t xMutexHandle = nullptr;
-    StaticSemaphore_t xMutexBuffer;
+    class RecursiveMutex
+    {
+    private:
+        SemaphoreHandle_t xMutexHandle = nullptr;
+        StaticSemaphore_t xMutexBuffer;
 
-public:
-    RecursiveMutex();
+    public:
+        RecursiveMutex();
 
-    RecursiveMutex(const RecursiveMutex &) = delete;
-    RecursiveMutex &operator=(const RecursiveMutex &) = delete;
-    RecursiveMutex(RecursiveMutex &&) = delete;
-    RecursiveMutex &operator=(RecursiveMutex &&) = delete;
+        RecursiveMutex(const RecursiveMutex &) = delete;
+        RecursiveMutex &operator=(const RecursiveMutex &) = delete;
+        RecursiveMutex(RecursiveMutex &&) = delete;
+        RecursiveMutex &operator=(RecursiveMutex &&) = delete;
 
-    ~RecursiveMutex();
+        ~RecursiveMutex();
 
-    [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
-};
+        [[nodiscard]] SemaphoreHandle_t &get_handle() noexcept;
+    };
+}
 
 #endif

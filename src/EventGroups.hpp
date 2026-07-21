@@ -22,45 +22,48 @@
 #endif
 #endif
 
-class EventGroup
+namespace fcjj
 {
-private:
-  EventGroupHandle_t xHandle = nullptr;
-  StaticEventGroup_t xBuffer;
+  class EventGroup
+  {
+  private:
+    EventGroupHandle_t xHandle = nullptr;
+    StaticEventGroup_t xBuffer;
 
-public:
-  EventGroup();
+  public:
+    EventGroup();
 
-  EventGroup(const EventGroup &) = delete;
-  EventGroup &operator=(const EventGroup &) = delete;
-  EventGroup(EventGroup &&) = delete;
-  EventGroup &operator=(EventGroup &&) = delete;
+    EventGroup(const EventGroup &) = delete;
+    EventGroup &operator=(const EventGroup &) = delete;
+    EventGroup(EventGroup &&) = delete;
+    EventGroup &operator=(EventGroup &&) = delete;
 
-  ~EventGroup();
+    ~EventGroup();
 
-  [[nodiscard]] EventBits_t set(EventBits_t bits);
+    [[nodiscard]] EventBits_t set(EventBits_t bits);
 
-  [[nodiscard]] bool set_from_isr(EventBits_t bits, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+    [[nodiscard]] bool set_from_isr(EventBits_t bits, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 
-  [[nodiscard]] EventBits_t clear(EventBits_t bits);
+    [[nodiscard]] EventBits_t clear(EventBits_t bits);
 
-  [[nodiscard]] EventBits_t clear_from_isr(EventBits_t bits);
+    [[nodiscard]] EventBits_t clear_from_isr(EventBits_t bits);
 
-  [[nodiscard]] EventBits_t get() const;
+    [[nodiscard]] EventBits_t get() const;
 
-  [[nodiscard]] EventBits_t get_from_isr() const;
+    [[nodiscard]] EventBits_t get_from_isr() const;
 
-  [[nodiscard]] EventBits_t wait_any(EventBits_t bits_to_wait, bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] EventBits_t wait_any(EventBits_t bits_to_wait, bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
 
-  [[nodiscard]] EventBits_t wait_all(EventBits_t bits_to_wait, bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] EventBits_t wait_all(EventBits_t bits_to_wait, bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
 
-  [[nodiscard]] EventBits_t sync(EventBits_t bits_to_set, EventBits_t bits_to_wait, uint32_t timeout_ms = 0xFFFFFFFF);
+    [[nodiscard]] EventBits_t sync(EventBits_t bits_to_set, EventBits_t bits_to_wait, uint32_t timeout_ms = 0xFFFFFFFF);
 
-  [[nodiscard]] bool all_set(EventBits_t bits) const;
+    [[nodiscard]] bool all_set(EventBits_t bits) const;
 
-  [[nodiscard]] bool any_set(EventBits_t bits) const;
+    [[nodiscard]] bool any_set(EventBits_t bits) const;
 
-  [[nodiscard]] EventGroupHandle_t get_handle() const noexcept;
-};
+    [[nodiscard]] EventGroupHandle_t get_handle() const noexcept;
+  };
+}
 
 #endif

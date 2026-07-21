@@ -2,6 +2,8 @@
 #include <ThreadRTOS.hpp>
 #include <LGuards.hpp>
 
+using namespace fcjj;
+
 // Vanilla FreeRTOS mutex protecting the shared counter below
 SemaphoreHandle_t counter_mutex = nullptr;
 

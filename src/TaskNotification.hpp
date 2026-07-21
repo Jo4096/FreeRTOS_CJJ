@@ -4,15 +4,17 @@
 #include "FreeRTOS_Base.h"
 #include RTOS_INC("freertos/task.h", <task.h>, <task.h>)
 #include "Threads.hpp"
-
-class TaskNotification
+namespace fcjj
 {
-public:
-    [[nodiscard]] static bool notify(const IThread &target_thread);
+    class TaskNotification
+    {
+    public:
+        [[nodiscard]] static bool notify(const IThread &target_thread);
 
-    [[nodiscard]] static bool notify_from_isr(const IThread &target_thread, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
+        [[nodiscard]] static bool notify_from_isr(const IThread &target_thread, BaseType_t *pxHigherPriorityTaskWoken = nullptr);
 
-    [[nodiscard]] static uint32_t wait(bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
-};
+        [[nodiscard]] static uint32_t wait(bool clear_on_exit = true, uint32_t timeout_ms = 0xFFFFFFFF);
+    };
+}
 
 #endif

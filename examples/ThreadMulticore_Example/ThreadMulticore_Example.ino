@@ -2,6 +2,8 @@
 #include <FreeRTOS_CJJ.h>
 #include <SafeSerial.hpp>
 
+using namespace fcjj;
+
 // For more info on SafeSerial check the SafeSerial_Example
 SafeSerial sSerial(Serial);
 

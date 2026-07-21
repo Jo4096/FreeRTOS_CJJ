@@ -2,6 +2,8 @@
 #include <SafeSerial.hpp>
 #include <ThreadRTOS.hpp>
 
+using namespace fcjj;
+
 // Instantiates SafeSerial wrapping the standard hardware Serial interface.
 // By default, it sets a 100 ms timeout window to acquire the internal mutex.
 SafeSerial sSerial(Serial);

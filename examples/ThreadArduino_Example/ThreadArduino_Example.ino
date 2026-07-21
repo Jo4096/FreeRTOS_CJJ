@@ -1,6 +1,8 @@
 #include <FreeRTOS_CJJ.h>
 #include <ThreadArduino.hpp>
 
+using namespace fcjj;
+
 // The first template parameter defines the stack size in Bytes. 
 // Standard FreeRTOS uses Words or Bytes depending on the architecture (e.g., Words on Pico, Bytes on ESP32).
 // FreeRTOS_CJJ abstracts this to Bytes across all platforms to prevent confusion.

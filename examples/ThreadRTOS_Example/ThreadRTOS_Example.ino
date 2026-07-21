@@ -1,6 +1,7 @@
 #include <FreeRTOS_CJJ.h>
 #include <ThreadRTOS.hpp>
 
+using namespace fcjj;
 
 // This class demonstrates a One-shot task.
 // Since there is no infinite loop inside Run(), the task executes once and terminates naturally.

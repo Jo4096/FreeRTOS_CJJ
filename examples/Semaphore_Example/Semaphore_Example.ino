@@ -3,6 +3,8 @@
 #include <SafeSerial.hpp>
 #include <ThreadRTOS.hpp>
 
+using namespace fcjj;
+
 SafeSerial sSerial(Serial);
 
 // BinarySemaphore: classic 1:1 synchronization, an ISR "signals" a task

@@ -2,6 +2,8 @@
 #include <SafeSerial.hpp>
 #include <SoftwareTimers.hpp>
 
+using namespace fcjj;
+
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 2
 #endif

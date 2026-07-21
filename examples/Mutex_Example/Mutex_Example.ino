@@ -3,6 +3,8 @@
 #include <Mutex.hpp>
 #include <LGuards.hpp>
 
+using namespace fcjj;
+
 // A shared resource accessed by multiple tasks. 
 // Modifying this without protection would cause a data race.
 int shared_variable = 0;

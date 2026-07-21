@@ -4,22 +4,25 @@
 #include "FreeRTOS_Base.h"
 #include "Threads.hpp"
 
-template <uint32_t StackSizeBytes, UBaseType_t Priority>
-class ThreadArduino : public ThreadABS<StackSizeBytes, Priority>
+namespace fcjj
 {
-protected:
-    virtual void setup() {}
-    virtual void loop() = 0;
-
-private:
-    void Run() final
+    template <uint32_t StackSizeBytes, UBaseType_t Priority>
+    class ThreadArduino : public ThreadABS<StackSizeBytes, Priority>
     {
-        setup();
-        for (;;)
+    protected:
+        virtual void setup() {}
+        virtual void loop() = 0;
+
+    private:
+        void Run() final
         {
-            loop();
+            setup();
+            for (;;)
+            {
+                loop();
+            }
         }
-    }
-};
+    };
+}
 
 #endif
